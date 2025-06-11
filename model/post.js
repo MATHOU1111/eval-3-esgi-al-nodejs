@@ -7,13 +7,21 @@ const Post = bdd.define('post', {
         unique: true,
         primaryKey: true
     },
+    authorId: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     content: {
         type: DataTypes.TEXT,
     },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
-    }
+    },
+    emotions: {
+        type: DataTypes.JSON,
+        defaultValue: {}
+    },
 });
 
 module.exports = Post;

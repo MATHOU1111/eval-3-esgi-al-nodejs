@@ -9,23 +9,23 @@ const dataset = async () => {
         nickname: "mathou"
     })
 
-
-
     await Post.create({
         id: "1",
+        authorId: "1",
         nickname: "mathou",
         content: "Premier post de mathou"
     })
 
-
     await Post.create({
         id: "2",
+        authorId: "1",
         nickname: "mathou",
         content: "deuxieme post de mathou"
     })
 
     await Post.create({
         id: "3",
+        authorId: "1",
         nickname: "mathou",
         content: "Troisieme post de mathou"
     })
