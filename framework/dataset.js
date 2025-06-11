@@ -1,4 +1,5 @@
 const User = require('../model/user.js');
+const Post = require('../model/post.js');
 const bcrypt = require('bcrypt');
 
 const dataset = async () => {
@@ -7,6 +8,27 @@ const dataset = async () => {
         password: bcrypt.hashSync('123456', 10),
         nickname: "mathou"
     })
-};
 
-module.exports = dataset;
+
+
+    await Post.create({
+        id: "1",
+        nickname: "mathou",
+        content: "Premier post de mathou"
+    })
+
+
+    await Post.create({
+        id: "2",
+        nickname: "mathou",
+        content: "deuxieme post de mathou"
+    })
+
+    await Post.create({
+        id: "3",
+        nickname: "mathou",
+        content: "Troisieme post de mathou"
+    })
+}
+
+module.exports = {dataset};
