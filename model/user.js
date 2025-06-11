@@ -1,4 +1,4 @@
-const {bdd} = require('./connexion/js');
+const {bdd} = require('./connexion.js');
 const {DataTypes} = require('sequelize');
 
 const User = bdd.define('user',{
