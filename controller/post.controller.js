@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const Post = require("../model/post.js");
+const Emotion = require("../model/emotion.js");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -51,6 +52,11 @@ exports.update = async (req, res) => {
         if (!post) {
             return res.status(404).json({ message: "PNF (Post not found)!" });
         }
+
+        if (post.authorId !== req.body.authorId) {
+            return res.status(403).json({ message: "Imposteur !" });
+        }
+
         await post.update(req.body);
         res.status(200).json(post);
     } catch (error) {
@@ -65,5 +71,50 @@ exports.create = async (req, res, next) => {
         res.status(201).json(post);
     } catch (error) {
         res.status(500).json({ error: "Erreur 500 :(  : " + error.message });
+    }
+};
+
+//- POST /messages/:id/emotions : Ajoute ou remplace une émotion
+exports.addEmotion = async (req, res) => {
+    try {
+        const post = await Post.findOne({ where: { id: req.params.id } });
+        if (!post) {
+            return res.status(404).json({ message: "PNF (Post not found)!" });
+        }
+
+        // Create or update the emotion
+        const [emotionRecord, created] = await Emotion.upsert({
+            postId: post.id,
+            authorId: userId,
+            reaction: emotion,
+        });
+
+        const message = created ? "Emotion added" : "Emotion updated";
+        res.status(200).json({ message, emotion: emotionRecord });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur 500 : " + error.message });
+    }
+};
+
+
+// - DELETE /messages/:id/emotions : Supprime l’émotion de l’utilisateur sur ce message
+exports.removeEmotion = async (req, res) => {
+    try {
+        const post = await Post.findOne({ where: { id: req.params.id } });
+        if (!post) {
+            return res.status(404).json({ message: "PNF (Post not found)!" });
+        }
+        const emotion = await Emotion.findOne({
+            where: { postId: post.id, authorId: userId },
+        });
+
+        if (!emotion) {
+            return res.status(404).json({ message: "Pas de reactions pour l'utilisateur" });
+        }
+
+        await emotion.destroy();
+        res.status(200).json({ message: "Emotion removed" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };

@@ -1,8 +1,13 @@
 const { bdd } = require('./connexion.js');
-const User = require("./../model/user.js");
+const Post = require("./../model/post.js");
+const Emotion = require("./../model/emotion.js");
 
 const sync = async () => {
-    await bdd.sync({ force: true });
+
+    Post.hasMany(Emotion, { foreignKey: 'postId', onDelete: 'CASCADE' });
+    Emotion.belongsTo(Post, { foreignKey: 'postId' });
+
+
 }
 
 module.exports = sync;
