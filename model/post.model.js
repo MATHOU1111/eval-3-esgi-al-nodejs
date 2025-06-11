@@ -3,7 +3,7 @@ const {DataTypes} = require('sequelize');
 
 const Post = bdd.define('post', {
     id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         unique: true,
         primaryKey: true
     },
@@ -18,10 +18,10 @@ const Post = bdd.define('post', {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    emotions: {
+    reactions: {
         type: DataTypes.JSON,
         defaultValue: {}
-    },
+    }
 });
 
 module.exports = Post;

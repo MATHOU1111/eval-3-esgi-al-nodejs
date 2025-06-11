@@ -1,6 +1,6 @@
 const {bdd} = require('./connexion.js');
 const {DataTypes} = require('sequelize');
-const Post = require("./post.js");
+const Post = require("./post.model.js");
 
 const Emotion = bdd.define(
     'emotion',

@@ -1,5 +1,5 @@
-const User = require('../model/user.js');
-const Post = require('../model/post.js');
+const User = require('../model/user.model.js');
+const Post = require('../model/post.model.js');
 const bcrypt = require('bcrypt');
 
 const dataset = async () => {

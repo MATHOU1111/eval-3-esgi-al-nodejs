@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const Post = require("../model/post.js");
+const Post = require("../model/post.model.js");
 const Emotion = require("../model/emotion.js");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -76,6 +76,7 @@ exports.create = async (req, res, next) => {
 
 //- POST /messages/:id/emotions : Ajoute ou remplace une émotion
 exports.addEmotion = async (req, res) => {
+    const { userId, reaction, postId } = req.body;
     try {
         const post = await Post.findOne({ where: { id: req.params.id } });
         if (!post) {
@@ -84,9 +85,9 @@ exports.addEmotion = async (req, res) => {
 
         // Create or update the emotion
         const [emotionRecord, created] = await Emotion.upsert({
-            postId: post.id,
+            postId: postId,
             authorId: userId,
-            reaction: emotion,
+            reaction: reaction,
         });
 
         const message = created ? "Emotion added" : "Emotion updated";
@@ -99,13 +100,14 @@ exports.addEmotion = async (req, res) => {
 
 // - DELETE /messages/:id/emotions : Supprime l’émotion de l’utilisateur sur ce message
 exports.removeEmotion = async (req, res) => {
+    const { userId, postId } = req.body;
     try {
         const post = await Post.findOne({ where: { id: req.params.id } });
         if (!post) {
             return res.status(404).json({ message: "PNF (Post not found)!" });
         }
         const emotion = await Emotion.findOne({
-            where: { postId: post.id, authorId: userId },
+            where: { postId: postId, authorId: userId },
         });
 
         if (!emotion) {
