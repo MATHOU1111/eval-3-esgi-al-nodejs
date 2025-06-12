@@ -76,24 +76,26 @@ exports.create = async (req, res, next) => {
 
 //- POST /messages/:id/emotions : Ajoute ou remplace une émotion
 exports.addEmotion = async (req, res) => {
-    const { userId, reaction, postId } = req.body;
+    const { userId, emotion, postId } = req.body;
     try {
-        const post = await Post.findOne({ where: { id: req.params.id } });
+        const post = await Post.findOne({ where: { id: req.params.id } })
         if (!post) {
-            return res.status(404).json({ message: "PNF (Post not found)!" });
+            return res.status(404).json({ message: "PNF (Post not found)!" })
         }
 
-        // Create or update the emotion
-        const [emotionRecord, created] = await Emotion.upsert({
+        if( emotion.authorId !== userId) {
+            return res.status(403).json({ message: "Imposteur !" })
+        }
+
+        const [emotionRecord] = await Emotion.upsert({
             postId: postId,
             authorId: userId,
-            reaction: reaction,
-        });
+            reaction: emotion,
+        })
 
-        const message = created ? "Emotion added" : "Emotion updated";
-        res.status(200).json({ message, emotion: emotionRecord });
+        res.status(200).json({ emotion: emotionRecord })
     } catch (error) {
-        res.status(500).json({ message: "Erreur 500 : " + error.message });
+        res.status(500).json({ message: "Erreur 500 : " + error.message })
     }
 };
 
@@ -102,7 +104,7 @@ exports.addEmotion = async (req, res) => {
 exports.removeEmotion = async (req, res) => {
     const { userId, postId } = req.body;
     try {
-        const post = await Post.findOne({ where: { id: req.params.id } });
+        const post = await Post.findOne({ where: { id: req.params.id } })
         if (!post) {
             return res.status(404).json({ message: "PNF (Post not found)!" });
         }
@@ -114,8 +116,11 @@ exports.removeEmotion = async (req, res) => {
             return res.status(404).json({ message: "Pas de reactions pour l'utilisateur" });
         }
 
+        if( emotion.authorId !== userId) {
+            return res.status(403).json({ message: "Imposteur !" });
+        }
         await emotion.destroy();
-        res.status(200).json({ message: "Emotion removed" });
+        res.status(200).json({ message: "Emotion supprimé" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
